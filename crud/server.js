@@ -1,8 +1,10 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
+
+var express        =        require("express");
+var bodyParser     =        require("body-parser");
+var app            =        express();
+//Here we are configuring express to use body-parser as middle-ware.
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}) );
 var mongoose = require('mongoose');    
 
 mongoose.connect("mongodb://root:root123456@ds029630.mlab.com:29630/bookfair", { useNewUrlParser: true });
@@ -13,15 +15,16 @@ db.once("open", function(callback) {
   });
 
   var Schema = mongoose.Schema; 
-  var bugSchema = new Schema({
+  var adminSchema = new Schema({
     name: String,
     email: String,
     password: String
   });
-   
-  var Bug = mongoose.model("app_admin", bugSchema);
+  var userSchema = new Schema({
+    name: String,
+    email: String
+  });
 
-  var myData = new Bug({ name: "admin", email: "admin@gmail.com",password:"123456" });
   
   app.all("/*", function(req, res, next){
     res.header('Access-Control-Allow-Origin', '*');
@@ -39,8 +42,18 @@ db.once("open", function(callback) {
     res.send("Ok");
   });
 
+  app.get('/insertuser', function(req, res){
+    console.log('ok');
+    db.collection("app_user").insertOne({ name: "Test1", email: "test1@gmail.com" }, function(err, res) {
+      if (err) throw err;
+      console.log("Document inserted");
+      db.close();
+    });
+    res.send('Ok');
+  });
+
   app.get('/list', function(req, res){
-    db.collection("app_admin").find().toArray(function(err, result) {
+    db.collection("app_user").find().toArray(function(err, result) {
       if (err) throw err;
       console.log(result);
       db.close();
@@ -78,6 +91,7 @@ db.once("open", function(callback) {
   });
 
   app.post('/logauth', function (req, res) {
+    console.log(req.body);
     db.collection("app_admin").find(req.body).toArray(function(err, result) {
       if (err) throw err;
       console.log(result);
@@ -85,6 +99,10 @@ db.once("open", function(callback) {
       db.close();
     });
   })
+
+  app.get('/check',function(req,res){
+    console.log('Ok');
+  });
   
   app.listen(3000, function () {
     console.log('Example app listening on port 3000!')

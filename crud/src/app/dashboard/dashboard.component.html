@@ -1,3 +1,16 @@
-<p>
-  dashboard works!
-</p>
+<table *ngFor="let user of users">
+  <thead>
+    <tr>
+      <td>Name</td>
+      <td>Email</td>
+      <td>Action</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{user.name}}</td>
+      <td>{{user.email}}</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>

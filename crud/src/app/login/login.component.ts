@@ -11,7 +11,7 @@ export class LoginComponent implements OnInit {
   loginForm : FormGroup;
   submitted: boolean = false;
   invalidLogin: boolean = false;
-
+  _id:string;
   constructor(private fb:FormBuilder, private router: Router,private authenticationservice:AuthenticationService) { 
     if(this.authenticationservice.currentUserValue){
       this.router.navigate(['/dashboard']);
@@ -33,12 +33,20 @@ export class LoginComponent implements OnInit {
     if(this.loginForm.controls.email.value && this.loginForm.controls.password.value){
        
         console.log(this.authenticationservice.login(this.loginForm.controls.email.value,this.loginForm.controls.password.value));
-        if(this.authenticationservice.login(this.loginForm.controls.email.value,this.loginForm.controls.password.value)){
-          this.router.navigate(['/dashboard']);
-        }
-        else{
-          this.invalidLogin =false;
-        }
+        this.authenticationservice.login(this.loginForm.controls.email.value,this.loginForm.controls.password.value)
+        .subscribe(
+          data => {
+            console.log(data);
+            if(data){
+              this.router.navigate(['/dashboard']);
+            }
+            else{
+              this.invalidLogin=false;
+            }
+          },
+          error => {
+            console.log(error);
+        });
     }
   }
 

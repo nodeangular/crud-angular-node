@@ -22,14 +22,11 @@ export class AuthenticationService {
   }
 
   login(email,password){
-    
-    const headers = new HttpHeaders()
-    .set('Authorization', 'my-auth-token')
-    .set('Content-Type', 'application/json');
-    this.http.post(this.baseUrl,{'email':email,'password':password}).subscribe(user => {
+    return this.http.post(this.baseUrl,{email:email,password:password})
+    .pipe(map(user => {
       // login successful if there's a jwt token in the response
       if (user) {
-        
+        console.log(user);
         localStorage.setItem('isLoggedin','1');
         // store user details and jwt token in local storage to keep user logged in between page refreshes
         localStorage.setItem('currentUser', JSON.stringify(user));
@@ -39,7 +36,7 @@ export class AuthenticationService {
         return false;
       }
       
-    });
+    }));
     
   }
 
